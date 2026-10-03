@@ -296,15 +296,26 @@ def glass(m, n):
 @material
 def glass_thin(m, n):
     """Thin-sheet glass: Fresnel reflections over a transparent base, so it
-    does not cast the black shadows a refractive solid would without caustics."""
-    fr = n.add('ShaderNodeFresnel')
-    fr.inputs['IOR'].default_value = 1.52
+    does not cast the black shadows a refractive solid would without caustics.
+
+    The Fresnel term is Schlick's approximation on |N.I|, so both sides of a
+    single face reflect alike. (The Fresnel node treats a back face as the
+    inside of a glass block and goes totally reflective past ~42 degrees.)
+    """
+    geo = n.add('ShaderNodeNewGeometry')
+    dot = n.add('ShaderNodeVectorMath', operation='DOT_PRODUCT')
+    n.link(geo.outputs['Incoming'], dot.inputs[0])
+    n.link(geo.outputs['Normal'], dot.inputs[1])
+    cos = n.math('ABSOLUTE', dot.outputs['Value'])
+    f0 = 0.04                                        # ((1.52 - 1) / (1.52 + 1)) ** 2
+    schlick = n.math('MULTIPLY_ADD', n.math('POWER', n.math('SUBTRACT', 1.0, cos), 5.0),
+                     1.0 - f0, f0)
     tr = n.add('ShaderNodeBsdfTransparent')
     tr.inputs['Color'].default_value = (0.94, 0.98, 0.96, 1.0)
     gl = n.add('ShaderNodeBsdfGlossy')
     gl.inputs['Roughness'].default_value = 0.0
     mix = n.add('ShaderNodeMixShader')
-    n.link(fr.outputs[0], mix.inputs[0])
+    n.link(schlick, mix.inputs[0])
     n.link(tr.outputs[0], mix.inputs[1])
     n.link(gl.outputs[0], mix.inputs[2])
     n.finish(mix.outputs[0])

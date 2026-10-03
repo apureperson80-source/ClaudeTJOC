@@ -256,7 +256,6 @@ def build_residential(scene, lib):
                 (W + 0.25, n_u1 + 0.01, n_v1 + 0.01), mat('paint_white'))
         box_obj('Duct', (0.0, yd + TILE_T, 0.0), (xb - TILE_T, D + TILE_T, duct_h - TILE_T),
                 mat('paint_white'))
-        # skirting-free tiled walls
         # each tiled face stops a tile-thickness short of the faces it meets,
         # so tiles butt against each other instead of overlapping
         tiled_surface('Duct front', (0, yd, 0), (1, 0, 0), (0, 0, 1), (0, -1, 0),
@@ -337,8 +336,8 @@ def build_residential(scene, lib):
             lib.place('downlight', (x, y, Hh))
         lib.place('extractor', (2.0, 0.45, Hh))
         _fill_light('Ceiling bounce', (W / 2, D / 2, Hh - 0.02), (2.4, 2.0), 70)
-        _fill_light('Front bounce', (W / 2, 0.15, 1.3), (2.0, 1.2), 35)
-        bpy.data.objects['Front bounce'].rotation_euler = (math.radians(-90), 0, 0)
+        front = _fill_light('Front bounce', (W / 2, 0.15, 1.3), (2.0, 1.2), 35)
+        front.rotation_euler = (math.radians(-90), 0, 0)   # lights the wall behind the camera
         cams = [
             _camera('Home - Main', (0.42, 0.30, 1.42), (2.05, 2.6, 1.02), 17),
             _camera('Home - Shower', (2.25, 0.80, 1.62), (W - 0.40, D, 1.28), 24),
@@ -380,17 +379,16 @@ def build_public(scene, lib):
         slab('Front wall', (-0.2, -0.2, W + 0.2, Hh + 0.5), 'Y', -0.2, -TILE_T, mat('paint_white'))
         slab('Left wall', (-0.2, -0.2, D + 0.2, Hh + 0.5), 'X', -0.2, -TILE_T, mat('paint_white'))
         slab('Right wall', (-0.2, -0.2, D + 0.2, Hh + 0.5), 'X', W + TILE_T, W + 0.2, mat('paint_white'))
-        s = _grid_start
+        # walls are tiled right through behind the mirror and door (both sit
+        # in front of the tile face), so no cut edges can peek out around them
         tiled_surface('Back wall', (0, D, 0), (1, 0, 0), (0, 0, 1), (0, -1, 0), (W, Hh),
                       (t, t), g, lilac, grout, seed=11, start=(0, 0))
         tiled_surface('Front wall', (W, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 1, 0), (W, Hh),
-                      (t, t), g, lilac, grout, seed=12,
-                      holes=[(W - door_x - 0.50, 0, W - door_x + 0.50, 2.12)])
+                      (t, t), g, lilac, grout, seed=12)
         tiled_surface('Left wall', (0, 0, 0), (0, 1, 0), (0, 0, 1), (1, 0, 0), (D, Hh),
-                      (t, t), g, lilac, grout, seed=13, start=(s(D, pitch), 0),
-                      holes=[(v_y0 + 0.04, 1.30, v_y0 + v_len - 0.04, 2.04)])
+                      (t, t), g, lilac, grout, seed=13, start=(_grid_start(D, pitch), 0))
         tiled_surface('Right wall', (W, 0, 0), (0, 1, 0), (0, 0, 1), (-1, 0, 0), (D, Hh),
-                      (t, t), g, lilac, grout, seed=14, start=(s(D, pitch), 0),
+                      (t, t), g, lilac, grout, seed=14, start=(_grid_start(D, pitch), 0),
                       holes=[(c_y0 + 0.01, 0, D + 0.1, 1.10)])
         tiled_surface('Floor', (0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1), (W, D),
                       (0.3, 0.3), 0.003, mat('floor_speckle'), mat('grout_grey'),
@@ -436,7 +434,7 @@ def build_public(scene, lib):
     with target(acc):
         lib.place('hand_dryer', (1.05, D, 1.10))
         lib.place('hand_dryer', (1.60, D, 1.10))
-        lib.place('towel_disp', (2.10 - 0.02, D, 1.15))
+        lib.place('towel_disp', (2.08, D, 1.15))
         lib.place('waste_bin', (2.08, D - 0.25, 0))
 
     with target(lights):

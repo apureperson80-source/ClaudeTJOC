@@ -7,9 +7,8 @@ z = 0 unless stated otherwise. Dimensions are in metres.
 
 import math
 
-from mathutils import Matrix, Vector
-
 import bpy
+from mathutils import Matrix, Vector
 
 from .geo import (MeshBuilder, catmull_rom, fillet_path, group, link,
                   offset_poly, path_length, resample, ring_xy, ring_xz,
@@ -51,10 +50,13 @@ PAN_CC = [
 
 
 def _water(specs, z, grow=1.03, n=48):
-    """Flat water surface matching the bowl cross-section at height z."""
-    bowl = [s for s in specs if s[6] < 0.399]
-    for a, b in zip(bowl, bowl[1:]):
-        if a[6] >= z >= b[6]:
+    """Flat water surface matching the bowl cross-section at height z.
+
+    The bowl is the only part of a pan profile whose rings run downwards,
+    so the first descending pair that brackets z is the one to interpolate.
+    """
+    for a, b in zip(specs, specs[1:]):
+        if a[6] > b[6] and a[6] >= z >= b[6]:
             t = (a[6] - z) / (a[6] - b[6])
             w, df, db, ef, eb, cy, _ = _lerp_spec(a, b, t)
             mb = MeshBuilder()
@@ -475,14 +477,14 @@ def bath_screen(width=0.80, height=1.45, metal='brass'):
         t = 0.008
         poly = [(-0.012, 0.004), (-0.012, height), (-width, height), (-width, 0.004)]
         rings = [[Vector((w, u, v)) for u, v in poly] for w in (-t / 2, t / 2)]
-        # polished edges as solid green-edged glass; the large faces as thin
-        # glass so the screen doesn't cast a black shadow into the bath.
-        # (kept as two objects: mixing volume/non-volume materials on one
-        # mesh renders black in older Cycles versions)
+        # Polished edges are solid green-tinted glass. The large faces use
+        # thin glass so the screen doesn't cast a black shadow into the bath;
+        # it is a single mid-plane face because two parallel thin-glass faces
+        # render black in Cycles 4.2.
         em = MeshBuilder()
         em.loft(rings)
         em.build('Glass edges', mat('glass'), 'FLAT')
-        gm = MeshBuilder()   # one mid-plane face: two parallel faces go black in 4.2
+        gm = MeshBuilder()
         gm.polygon([Vector((0.0, u, v)) for u, v in poly])
         gm.build('Glass', mat('glass_thin'), 'FLAT')
         mb = MeshBuilder()
@@ -490,7 +492,7 @@ def bath_screen(width=0.80, height=1.45, metal='brass'):
         mb.rounded_box((0.024, 0.026, height + 0.01), 0.002, (0, -0.013, height / 2 + 0.002), 2, 2)
         mb.rounded_box((0.016, 0.014, height - 0.004), 0.002,
                        (0, -width - 0.002, height / 2 + 0.004), 2, 2)
-        # top cap & bottom foot of the stiffener
+        # top cap of the stiffener
         mb.rounded_box((0.018, 0.020, 0.010), 0.002, (0, -width - 0.002, height + 0.006), 2, 2)
         mb.build('Screen profiles', mat(metal))
         sm = MeshBuilder()

@@ -368,7 +368,7 @@ def vanity_counter(n=5, spacing=0.75, depth=0.55, top=0.85, end=0.20):
     """Solid-surface counter with ``n`` integrated oval bowls.
 
     Local frame: wall at y=0, front at -depth, length along +X from 0.
-    Returns (root, tap_positions).
+    Returns (root, tap_positions, total_length).
     """
     length = n * spacing + 2 * end
     taps = []
@@ -451,7 +451,7 @@ def _leg(mb, x, y):
 def cubicle_row(n=4, bay=0.95, depth=1.55, height=2.0, pil=0.24, end_w=0.08,
                 open_doors=None, gap=0.004):
     """Row of WC cubicles. Local frame: back wall y=0, fronts at y=-depth,
-    bays along +X starting at x=0. Returns (root, bay_centres)."""
+    bays along +X starting at x=0. Returns (root, bay_centres, total_length)."""
     open_doors = open_doors or {}
     t = 0.013
     z0 = 0.15

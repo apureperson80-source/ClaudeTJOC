@@ -65,6 +65,38 @@ Everything is real geometry. There are no image-based stand-ins, apart from the 
 Geometry at render subdivision levels: about 0.29 M triangles for the residential scene and
 0.42 M for the public washroom. There are 48 PBR materials, all procedural apart from the art print.
 
+## Using the models in Roblox
+
+`roblox_export.zip` holds Roblox-ready versions of everything. Unzip it to get:
+
+| File | Contents |
+|---|---|
+| `roblox/fixtures/*.obj` | each of the 38 fixtures as its own model (toilet, basin, taps, shower, bath, urinal, dryers …) |
+| `roblox/rooms/Residential_Bathroom.obj`, `Public_Washroom.obj` | each room fully assembled |
+| `roblox/apply_materials.lua` | gives every part its Roblox colour, material, reflectance and transparency |
+| `roblox/textures/art_print.png` | image for the framed print |
+
+The export has already been adapted to Roblox:
+- **Scale:** sized in studs (1 stud = 0.28 m), with Y pointing up.
+- **Triangle limit:** every part is under Roblox's mesh limit (at most 19,000 triangles).
+- **Materials:** parts are split per material and named `<part>__<Material>`.
+- **Textures:** every part has UVs, so Roblox's textured materials (Wood, Marble, Fabric …) apply properly.
+
+**Importing:**
+1. In Roblox Studio open **File → Import 3D** (or the *Import 3D* button on the Home/Avatar tab) and pick an `.obj`. Keep each `.mtl` next to its `.obj`.
+2. In the import dialog, leave the scale as studs. The 3 m bathroom should come in about 11 studs wide. Click **Import**.
+3. Select the imported model in the Explorer. Then open **View → Command Bar**, paste the contents of `apply_materials.lua` and press <kbd>Enter</kbd>. Every part gets its proper look (glass, brass, chrome, tiles, wood doors …) and is anchored.
+4. *(Optional)* To show the artwork in the frame:
+   - upload `art_print.png` through the Asset Manager;
+   - copy its `rbxassetid://…` id into `ART_PRINT_TEXTURE` at the top of the script;
+   - run the script again.
+
+Tips:
+- **Lights:** the room ceilings are solid, so add PointLights/SurfaceLights (for example on the `Neon` light parts) or delete the ceiling part. Blender lights don't export.
+- **Large room files:** the room files are large because every tile is real geometry. If Studio is slow, import the individual fixtures instead and build the room from Roblox parts.
+- **Re-exporting:** regenerate the export after changing the `.blend` with
+  `blender --background --python export_roblox.py` (options: `--studs-per-m`, `--max-tris`, `--subdiv`).
+
 ## Regenerating / modifying
 
 The `.blend` is produced by the scripts in this repository:
@@ -92,6 +124,7 @@ The build takes about 3 seconds. Renders take a few minutes per camera on a CPU.
 | File | Contents |
 |---|---|
 | `build_bathroom.py` | entry point: creates the scenes, saves, and renders |
+| `export_roblox.py` | converts `bathroom.blend` into the Roblox OBJ files + styling script |
 | `bathroom_gen/geo.py` | mesh toolkit with no `bpy.ops`: superellipse and rounded-polygon rings, a lofter, lathe, tube and profile sweeps along rotation-minimising frames, fillets, splines, and the 3D tile layer |
 | `bathroom_gen/materials.py` | procedural PBR material library (ceramic, brushed brass, glazed tiles, marble, oak laminate, glass, fabric, leaves …) |
 | `bathroom_gen/textures.py` | numpy-generated art print, packed into the file |

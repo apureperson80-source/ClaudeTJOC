@@ -608,3 +608,16 @@ def wall_blue_grey(m, n):
 @material
 def steel_grey(m, n):
     _plastic(m, n, hexcol('#8a8e93'), 0.4, coat=0.1)
+
+
+@material
+def mesh_perforated(m, n):
+    """Perforated steel door: you see the equipment through the holes."""
+    p = n.bsdf(hexcol('#16171a'), 0.5, 0.6)
+    tr = n.add('ShaderNodeBsdfTransparent')
+    mix = n.add('ShaderNodeMixShader')
+    mix.inputs[0].default_value = 0.45
+    n.link(tr.outputs[0], mix.inputs[1])
+    n.link(p.outputs[0], mix.inputs[2])
+    n.finish(mix.outputs[0])
+    m.diffuse_color = (0.09, 0.09, 0.1, 0.6)

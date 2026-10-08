@@ -167,7 +167,7 @@ def catalogue_set(scene):
             ('Printers', camera('Product - Printers', (11.28, -1.05, 0.74), (11.3, 0.55, 0.07), 42)),
             ('Control room kit', camera('Product - Control Room Kit', (14.6, -2.9, 1.75),
                                         (15.5, 1.4, 0.95), 35)),
-            ('Set dressing', camera('Product - Set Dressing', (24.15, -6.4, 2.9), (24.15, 1.4, 1.0), 30)),
+            ('Set dressing', camera('Product - Set Dressing', (24.25, -6.4, 2.9), (24.25, 1.4, 1.0), 27)),
         ]
         for tag, cam in cams:
             cam['rig'] = tag

@@ -34,7 +34,8 @@ More renders, including the video wall close-up and the set dressing, are in [`r
 
 ### Opening it
 
-1. Open `props.blend` in **Blender 4.2 LTS or newer** and pick a scene from the scene selector.
+1. Open `props.blend` in **Blender 4.2 LTS or newer** (tested on 4.2.0 and 5.0.1) and pick a scene
+   from the scene selector.
 2. Every scene has its own cameras:
    - *Product - …* in the Prop Library;
    - *Control Room - …*;

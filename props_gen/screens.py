@@ -104,7 +104,7 @@ def _chrome(title):
     cv.text(title, 14, TILE_H - 24, 13, TEXT, weight=0.5)
     cv.text('%s 14:32:18' % STAMP, TILE_W - 14, TILE_H - 24, 13, DIM, weight=0.45, align='right')
     for k, c in enumerate(('#ff5f56', '#ffbd2e', '#27c93f')):
-        cv.ellipse(TILE_W - 260 + k * 18, TILE_H - 17, 5, 5, c)
+        cv.ellipse(TILE_W - 300 + k * 18, TILE_H - 17, 5, 5, c)
     return cv
 
 

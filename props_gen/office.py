@@ -374,7 +374,7 @@ def server_rack(name='Server rack', seed=2):
         body = P('Cabinet', 'plastic_black_matte', 'HARD')
         w, d, h = 0.6, 1.07, 2.0
         _rbox(body, (-w / 2, -d / 2, 0.0), (w / 2, d / 2, h), 0.006)
-        door = P('Perforated door', 'mesh_black', 'FLAT')
+        door = P('Perforated door', 'mesh_perforated', 'FLAT')
         door.box((-w / 2 + 0.03, -d / 2 - 0.006, 0.08), (w / 2 - 0.03, -d / 2 - 0.002, h - 0.08))
         units = P('Servers', 'gunmetal', 'FLAT')
         green = P('LEDs (green)', 'led_green', 'FLAT')

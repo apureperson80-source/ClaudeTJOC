@@ -229,12 +229,12 @@ def _ink_tanks(P, W, D, H):
     for i, (key, level) in enumerate(INKS):
         cx = x0 + pitch * (i + 0.5)
         ink = P('Ink %s' % key.split('_')[1], key, 'FLAT')
-        ink.box((cx - pitch * 0.32, yf - 0.0105, z0 + 0.006), (cx + pitch * 0.32, yf - 0.0102,
-                                                               z0 + 0.006 + (z1 - z0 - 0.02) * level))
+        ink.box((cx - pitch * 0.4, yf - 0.0105, z0 + 0.006), (cx + pitch * 0.4, yf - 0.0102,
+                                                              z0 + 0.006 + (z1 - z0 - 0.02) * level))
         marks = P('Tank marks', 'print_black', 'FLAT')
         for zz in (z0 + 0.012, z1 - 0.014):
             marks.box((cx - pitch * 0.38, yf - 0.0107, zz), (cx + pitch * 0.38, yf - 0.0105, zz + 0.0008))
-    win = P('Tank window', 'plastic_clear', 'FLAT')
+    win = P('Tank window', 'glass_thin', 'FLAT')
     win.quad([Vector((x0, yf - 0.0108, z0)), Vector((x1, yf - 0.0108, z0)), Vector((x1, yf - 0.0108, z1)),
               Vector((x0, yf - 0.0108, z1))])
     lbl = P('Tank label', 'indicator_red', 'FLAT')
